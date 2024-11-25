@@ -38,8 +38,11 @@ type Profile struct {
 type user struct {
 	Data struct {
 		User struct {
-			RestID string     `json:"rest_id"`
-			Legacy legacyUser `json:"legacy"`
+			Result struct {
+				Typename string     `json:"__typename"`
+				RestID   string     `json:"rest_id"`
+				Legacy   legacyUser `json:"legacy"`
+			} `json:"result"`
 		} `json:"user"`
 	} `json:"data"`
 	Errors []struct {
@@ -50,7 +53,7 @@ type user struct {
 // GetProfile return parsed user profile.
 func (s *Scraper) GetProfile(username string) (Profile, error) {
 	var jsn user
-	req, err := http.NewRequest("GET", "https://api.twitter.com/graphql/4S2ihIKfF3xhp-ENxvUAfQ/UserByScreenName", nil)
+	req, err := http.NewRequest("GET", "https://x.com/i/api/graphql/laYnJPCAcVo0o6pzcnlVxQ/UserByScreenName", nil)
 	if err != nil {
 		return Profile{}, err
 	}
@@ -60,8 +63,13 @@ func (s *Scraper) GetProfile(username string) (Profile, error) {
 		"withHighlightedLabel": true,
 	}
 
+	features := map[string]interface{}{"hidden_profile_subscriptions_enabled": true, "rweb_tipjar_consumption_enabled": true, "responsive_web_graphql_exclude_directive_enabled": true, "verified_phone_label_enabled": false, "subscriptions_verification_info_is_identity_verified_enabled": true, "subscriptions_verification_info_verified_since_enabled": true, "highlights_tweets_tab_ui_enabled": true, "responsive_web_twitter_article_notes_tab_enabled": true, "subscriptions_feature_can_gift_premium": true, "creator_subscriptions_tweet_preview_api_enabled": true, "responsive_web_graphql_skip_user_profile_image_extensions_enabled": false, "responsive_web_graphql_timeline_navigation_enabled": true}
+	fieldToggles := map[string]interface{}{"withAuxiliaryUserLabels": false}
+
 	query := url.Values{}
 	query.Set("variables", mapToJSONString(variables))
+	query.Set("features", mapToJSONString(features))
+	query.Set("fieldToggles", mapToJSONString(fieldToggles))
 	req.URL.RawQuery = query.Encode()
 
 	err = s.RequestAPI(req, &jsn)
@@ -69,20 +77,20 @@ func (s *Scraper) GetProfile(username string) (Profile, error) {
 		return Profile{}, err
 	}
 
-	if len(jsn.Errors) > 0 {
-		return Profile{}, fmt.Errorf("%s", jsn.Errors[0].Message)
-	}
+	//if len(jsn.Errors) > 0 {
+	//	return Profile{}, fmt.Errorf("%s", jsn.Errors[0].Message)
+	//}
 
-	if jsn.Data.User.RestID == "" {
+	if jsn.Data.User.Result.RestID == "" {
 		return Profile{}, fmt.Errorf("rest_id not found")
 	}
-	jsn.Data.User.Legacy.IDStr = jsn.Data.User.RestID
+	jsn.Data.User.Result.Legacy.IDStr = jsn.Data.User.Result.RestID
 
-	if jsn.Data.User.Legacy.ScreenName == "" {
+	if jsn.Data.User.Result.Legacy.ScreenName == "" {
 		return Profile{}, fmt.Errorf("either @%s does not exist or is private", username)
 	}
 
-	return parseProfile(jsn.Data.User.Legacy), nil
+	return parseProfile(jsn.Data.User.Result.Legacy), nil
 }
 
 // GetUserIDByScreenName from API

@@ -158,6 +158,11 @@ func (s *Scraper) IsLoggedIn() bool {
 	return s.isLogged
 }
 
+func (s *Scraper) FakeIsLoggedIn() bool {
+	s.isLogged = true
+	return true
+}
+
 // Login to Twitter
 // Use Login(username, password) for ordinary login
 // or Login(username, password, email) for login if you have email confirmation

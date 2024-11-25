@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-const searchURL = "https://twitter.com/i/api/graphql/nK1dw4oV3k4w5TdtcAdSww/SearchTimeline"
+const searchURL = "https://x.com/i/api/graphql/MJpyQGqgklrVl_0X9gNy3A/SearchTimeline"
 
 type searchTimeline struct {
 	Data struct {
@@ -130,6 +130,13 @@ func (s *Scraper) getSearchTimeline(query string, maxNbr int, cursor string) (*s
 		"longform_notetweets_inline_media_enabled":                                true,
 		"responsive_web_media_download_video_enabled":                             false,
 		"responsive_web_enhance_cards_enabled":                                    false,
+
+		"c9s_tweet_anatomy_moderator_badge_enabled":            true,
+		"rweb_video_timestamps_enabled":                        true,
+		"creator_subscriptions_quote_tweet_preview_enabled":    false,
+		"communities_web_enable_tweet_community_results_fetch": true,
+		"articles_preview_enabled":                             true,
+		"rweb_tipjar_consumption_enabled":                      true,
 	}
 
 	fieldToggles := map[string]interface{}{

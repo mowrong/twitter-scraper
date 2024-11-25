@@ -137,7 +137,7 @@ func (s *Scraper) GetTweet(id string) (*Tweet, error) {
 			}
 		}
 	} else {
-		req, err := s.newRequest("GET", "https://twitter.com/i/api/graphql/VWFGPVAGkZMGRKGe3GFFnA/TweetDetail")
+		req, err := s.newRequest("GET", "https://x.com/i/api/graphql/nBS-WpgA6ZG0CyNHD517JQ/TweetDetail")
 		if err != nil {
 			return nil, err
 		}
@@ -172,6 +172,14 @@ func (s *Scraper) GetTweet(id string) (*Tweet, error) {
 			"longform_notetweets_rich_text_read_enabled":                              true,
 			"longform_notetweets_inline_media_enabled":                                true,
 			"responsive_web_enhance_cards_enabled":                                    false,
+
+			"rweb_tipjar_consumption_enabled":                          true,
+			"articles_preview_enabled":                                 true,
+			"communities_web_enable_tweet_community_results_fetch":     true,
+			"c9s_tweet_anatomy_moderator_badge_enabled":                true,
+			"creator_subscriptions_quote_tweet_preview_enabled":        false,
+			"responsive_web_twitter_article_tweet_consumption_enabled": true,
+			"rweb_video_timestamps_enabled":                            true,
 		}
 
 		query := url.Values{}
